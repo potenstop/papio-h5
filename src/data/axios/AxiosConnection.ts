@@ -91,11 +91,11 @@ export class AxiosConnection implements IConnection {
                 headers: headers
             };
             if (Setting.getDebug()) {
-                console.debug("start axios request requestBod:", requestBody);
+                console.log("start axios request requestBod:", requestBody);
             }
             const response = await Axios.request(requestBody);
             if (Setting.getDebug()) {
-                console.debug("end axios request requestBod:", requestBody, `status:${response.status} data:${JSON.stringify(response.data)} genericsProperty:`, genericsProperty);
+                console.log("end axios request requestBod:", requestBody, `status:${response.status} data:${JSON.stringify(response.data)} genericsProperty:`, genericsProperty);
             }
             if (response.status === 200) {
                 return JsonProtocol.jsonToBean(response.data, result, genericsProperty);
