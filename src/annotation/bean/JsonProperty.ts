@@ -21,9 +21,9 @@ export function JsonProperty(value: string | Option | object, propertyKey?: stri
         } else {
             op = value;
         }
-        return (target: (new () => object), propertyKey: string) => {
-            Property(target, propertyKey);
-            Reflect.defineMetadata(MetaConstant.JSON_PROPERTY, op, target, propertyKey);
+        return (target: (new () => object), propertyKey1: string) => {
+            Property(target, propertyKey1);
+            Reflect.defineMetadata(MetaConstant.JSON_PROPERTY, op, target, propertyKey1);
         };
     } else {
         Property(value, propertyKey);

@@ -65,6 +65,7 @@ export * from "./converter/DateTimeConverter";
 
 export { Beans } from "./core/Beans";
 export { Mappers } from "./core/Mappers";
+export { Setting } from "./core/Setting";
 
 export { HttpRequestError } from "./error/HttpRequestError";
 export { ValidError } from "./error/ValidError";

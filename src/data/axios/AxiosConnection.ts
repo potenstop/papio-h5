@@ -5,6 +5,7 @@ import {JsonProtocol} from "../../protocol/JsonProtocol";
 import {HttpRequestError} from "../../error/HttpRequestError";
 import {HttpRequestErrorEnum} from "../../enums/HttpRequestErrorEnum";
 import {AxiosOption} from "./AxiosOption";
+import {Setting} from "../../core/Setting";
 
 /**
  *
@@ -79,7 +80,7 @@ export class AxiosConnection implements IConnection {
         }
         try {
             const Axios = require("axios");
-            const response = await Axios.request({
+            const requestBody = {
                 url: uri,
                 baseURL: this.options.url,
                 method: method as any,
@@ -88,7 +89,14 @@ export class AxiosConnection implements IConnection {
                 timeout: timeout,
                 httpAgent: this.options.agent,
                 headers: headers
-            });
+            };
+            if (Setting.getDebug()) {
+                console.debug("start axios request requestBod:", requestBody);
+            }
+            const response = await Axios.request(requestBody);
+            if (Setting.getDebug()) {
+                console.debug("end axios request requestBod:", requestBody, `status:${response.status} data:${JSON.stringify(response.data)} genericsProperty:`, genericsProperty);
+            }
             if (response.status === 200) {
                 return JsonProtocol.jsonToBean(response.data, result, genericsProperty);
             } else {
