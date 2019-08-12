@@ -9,8 +9,9 @@
  */
 import "reflect-metadata";
 import {MetaConstant} from "../../constants/MetaConstant";
-export function ReturnGenericsProperty(value: Map<string, new () => object>): CallableFunction {
+export function ReturnGenericsProperty(returnObject: new () => object, value: Map<string, new () => object>): CallableFunction {
     return (target: object, propertyKey: string) => {
         Reflect.defineMetadata(MetaConstant.BEAN_RETURN_GENERICS, value, target, propertyKey);
+        Reflect.defineMetadata(MetaConstant.BEAN_RETURN_OBJECT, returnObject, target, propertyKey);
     };
 }

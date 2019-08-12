@@ -67,20 +67,11 @@ function exec(target: (new () => object), options: Options) {
         }
         for (const [k, v] of ownMetadata) {
             const returnGenericsProperty = Reflect.getOwnMetadata(MetaConstant.BEAN_RETURN_GENERICS,  target.prototype, k) || new Map<string, new () => object>();
+            const returnObjectProperty = Reflect.getOwnMetadata(MetaConstant.BEAN_RETURN_OBJECT,  target.prototype, k);
             const controllerArguments = Reflect.getOwnMetadata(MetaConstant.CONTROLLER_ARGUMENTS, target.prototype.constructor, k) || new Array<ControllerArgument>();
 
-            if (!returnGenericsProperty) {
+            if (!returnObjectProperty) {
                 throw new Error(`rest class(${target.name}) function(${k}) not found @ReturnGenericsProperty`);
-            }
-            let returnType;
-            for (const [gk, gv] of returnGenericsProperty) {
-                if (!returnType) {
-                    returnType = gk;
-                } else {
-                    if (gk.length < returnType.length) {
-                        returnType = gk;
-                    }
-                }
             }
             let url = "";
             if (options.name) {
@@ -105,7 +96,7 @@ function exec(target: (new () => object), options: Options) {
                 const params = {};
                 let body = {};
                 const headers = {};
-                controllerArguments.forEach(val => {
+                controllerArguments.forEach((val) => {
                     if (val.source === ControllerArgumentSourceEnum.PARAMS) {
                         params[val.outName] = arguments[val.index];
                     } else if (val.source === ControllerArgumentSourceEnum.BODY) {
@@ -117,7 +108,7 @@ function exec(target: (new () => object), options: Options) {
                 const i = Math.floor((Math.random() * writeDataSources.length));
                 const dataSource = writeDataSources[i];
                 const connection = await dataSource.getConnection() as AxiosConnection;
-                return await connection.request(returnGenericsProperty.get(returnType), returnGenericsProperty,  url, v.method, timeout, params, body, headers);
+                return await connection.request(returnObjectProperty, returnGenericsProperty,  url, v.method, timeout, params, body, headers);
             };
         }
     } else {

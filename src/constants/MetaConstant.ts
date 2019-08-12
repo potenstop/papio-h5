@@ -17,6 +17,7 @@ export class MetaConstant {
     public static KEYS = Symbol("papio.keys");
     public static CONTROLLER_ARGUMENTS = Symbol("papio.controller.arguments");
     public static BEAN_RETURN_GENERICS = Symbol("papio.bean.return.generics");
+    public static BEAN_RETURN_OBJECT = Symbol("papio.bean.return.object");
     public static AUTOWIRED = Symbol("papio.autowired");
     public static RESOURCE = Symbol("papio.resource");
     public static BEANS = Symbol("papio.beans");
