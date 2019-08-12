@@ -84,11 +84,11 @@ export class AxiosConnection implements IConnection {
                 url: uri,
                 baseURL: this.options.url,
                 method: method as any,
-                params: params,
+                params,
                 data: body,
-                timeout: timeout,
+                timeout,
                 httpAgent: this.options.agent,
-                headers: headers
+                headers,
             };
             if (Setting.getDebug()) {
                 console.log("start axios request requestBod:", requestBody);
@@ -98,11 +98,25 @@ export class AxiosConnection implements IConnection {
                 console.log("end axios request requestBod:", requestBody, `status:${response.status} data:${JSON.stringify(response.data)} genericsProperty:`, genericsProperty);
             }
             if (response.status === 200) {
-                return JsonProtocol.jsonToBean(response.data, result, genericsProperty);
+                if (JSHelperUtil.isBaseType(result)) {
+                    // @ts-ignore
+                    const d = result(response.data);
+                    // @ts-ignore
+                    if (result === Number) {
+                        if (isNaN(d)) {
+                            throw new Error("data converter Number error data:" + d);
+                        }
+                    }
+                    return d;
+                } else if (result instanceof Array) {
+                    throw new Error("result type is Array");
+                } else {
+                    return JsonProtocol.jsonToBean(response.data, result, genericsProperty);
+                }
             } else {
                 const error = new HttpRequestError();
                 error.code = HttpRequestErrorEnum.STATUS_ERROR;
-                error.message = 'status not equal to '+ response.status;
+                error.message = "status not equal to " + response.status;
                 throw error;
             }
         } catch (e) {
@@ -112,7 +126,7 @@ export class AxiosConnection implements IConnection {
             if (e.response) {
                 // 请求已发出，但服务器响应的状态码不在 2xx 范围内
                 error.status = e.response.status;
-                error.data = e.response.data
+                error.data = e.response.data;
             }
             throw error;
 
