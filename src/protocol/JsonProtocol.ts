@@ -11,6 +11,7 @@ import "reflect-metadata";
 import {MetaConstant} from "../constants/MetaConstant";
 import {JSHelperUtil} from "../util/JSHelperUtil";
 import {StringUtil} from "../util/StringUtil";
+import {CommonConstant} from "../constants/CommonConstant";
 import {IConverter} from "../converter/IConverter";
 import {DateTimeConverter} from "../converter/DateTimeConverter";
 import {DateUtil} from "../util/DateUtil";
@@ -27,15 +28,15 @@ export class JsonProtocol {
      * @return JSON
      */
     public static toArray(beans: object[], beanGenericsMap?: Map<string, new () => object>, parentKey?: string): object[] {
-        let _beanGenericsMap = new Map<string, new () => object>();
+        let map = new Map<string, new () => object>();
         if (JSHelperUtil.isNullOrUndefined(beanGenericsMap)) {
-            _beanGenericsMap = new Map<string, new () => object>();
+            map = new Map<string, new () => object>();
         } else {
             for (const [key, value] of beanGenericsMap) {
-                _beanGenericsMap.set(key, value);
+                map.set(key, value);
             }
         }
-        return JsonProtocol._toArray(beans, _beanGenericsMap, parentKey);
+        return JsonProtocol._toArray(beans, map, parentKey);
     }
     public static _toArray(beans: object[], beanGenericsMap: Map<string, new () => object>, parentKey: string): object[] {
         const result = [];
@@ -43,7 +44,7 @@ export class JsonProtocol {
             return result;
         }
         if (JSHelperUtil.isNullOrUndefined(parentKey)) {
-            parentKey = beans.constructor.name;
+            parentKey = "Array";
         }
         // 检查泛型是否定义了
         if (JSHelperUtil.isNullOrUndefined(beanGenericsMap.get(parentKey))) {
@@ -81,27 +82,27 @@ export class JsonProtocol {
      */
     public static toJson(bean: object, beanGenericsMap?: Map<string, new () => object>, parentKey?: string): object {
 
-        let _beanGenericsMap = new Map<string, new () => object>();
+        let map = new Map<string, new () => object>();
         if (JSHelperUtil.isNullOrUndefined(beanGenericsMap)) {
-            _beanGenericsMap = new Map<string, new () => object>();
+            map = new Map<string, new () => object>();
         } else {
             for (const [key, value] of beanGenericsMap) {
-                _beanGenericsMap.set(key, value);
+                map.set(key, value);
             }
         }
-        return JsonProtocol._toJson(bean, _beanGenericsMap, parentKey);
+        return JsonProtocol._toJson(bean, map, parentKey);
     }
     private static _toJson(bean: object, beanGenericsMap: Map<string, new () => object>, parentKey: string): object {
         if (JSHelperUtil.isNullOrUndefined(bean)) {
             return {};
         }
-        if (JSHelperUtil.isNullOrUndefined(parentKey)) {
+        /*if (JSHelperUtil.isNullOrUndefined(parentKey)) {
             parentKey = bean.constructor.name;
-        }
+        }*/
         const result = {};
         const keysMap = Reflect.getOwnMetadata(MetaConstant.KEYS, bean.constructor.prototype) || new Set<string>();
         for (const key of keysMap) {
-            let jsonOption = Reflect.getMetadata(MetaConstant.JSON_PROPERTY, bean, key);
+            const jsonOption = Reflect.getMetadata(MetaConstant.JSON_PROPERTY, bean, key);
             const returnGenerics = Reflect.getOwnMetadata(MetaConstant.BEAN_RETURN_GENERICS, bean.constructor.prototype, key) || new Map<string, new () => object>();
             let jsonKeyName = null;
             let jsonFormat = null;
@@ -111,7 +112,12 @@ export class JsonProtocol {
             }
             let typeName = Reflect.getMetadata(MetaConstant.DESIGN_TYPE, bean, key);
             // const GenericsKey = Reflect.getMetadata(MetaConstant.BEAN_GENERICS, bean, key);
-            const genericsKey = parentKey + "." + key;
+            let genericsKey = "";
+            if (JSHelperUtil.isNullOrUndefined(parentKey)) {
+                genericsKey = key;
+            } else {
+                genericsKey = parentKey + "." + key;
+            }
             for (const [genKey, genValue] of returnGenerics) {
                 if (!beanGenericsMap.has(genericsKey + "." + genKey)) {
                     beanGenericsMap.set(genericsKey + "." + genKey, genValue);
@@ -137,9 +143,9 @@ export class JsonProtocol {
                     result[jsonKeyName] = DateUtil.format(bean[key], DateFormatEnum.DATETIMES);
                 }
             } else if (JSHelperUtil.isClassType(typeName)) {
-                result[jsonKeyName] = JsonProtocol._toJson(bean[key], beanGenericsMap, genericsKey + "." + typeName.name);
+                result[jsonKeyName] = JsonProtocol._toJson(bean[key], beanGenericsMap, genericsKey);
             } else if (JSHelperUtil.isArrayType(typeName) || JSHelperUtil.isSetType(typeName)) {
-                result[jsonKeyName] = JsonProtocol._toArray(bean[key], beanGenericsMap, genericsKey + "." + (JSHelperUtil.isArrayType(typeName) ? "Array" : "Set"));
+                result[jsonKeyName] = JsonProtocol._toArray(bean[key], beanGenericsMap, genericsKey + "." + "Array");
                 // array set
             } else {
                 if (bean[key] === undefined) { bean[key] = null; }
@@ -179,18 +185,18 @@ export class JsonProtocol {
      * @return Bean[]
      */
     public static arrayToBeans<T>(array: object[], Bean: any, beanGenericsMap?: Map<string, new () => object>, parentKey?: string): T[]  {
-        let _beanGenericsMap = new Map<string, new () => object>();
+        let map = new Map<string, new () => object>();
         if (JSHelperUtil.isNullOrUndefined(beanGenericsMap)) {
-            _beanGenericsMap = new Map<string, new () => object>();
+            map = new Map<string, new () => object>();
         } else {
             for (const [key, value] of beanGenericsMap) {
-                _beanGenericsMap.set(key, value);
+                map.set(key, value);
             }
         }
-        return JsonProtocol._arrayToBeans<T>(array, Bean, _beanGenericsMap, parentKey);
+        return JsonProtocol._arrayToBeans<T>(array, Bean, map, parentKey);
     }
     public static _arrayToBeans<T>(array: object[], Bean: any, beanGenericsMap: Map<string, new () => object>, parentKey: string): T[]  {
-        let result = [];
+        const result = [];
         if (JSHelperUtil.isNullOrUndefined(array)) {
             return null;
         }
@@ -235,15 +241,15 @@ export class JsonProtocol {
      * @return Bean
      */
     public static jsonToBean<T>(json: object, Bean: new () => T, beanGenericsMap?: Map<string, new () => object>, parentKey?: string): T {
-        let _beanGenericsMap = new Map<string, new () => object>();
+        let map = new Map<string, new () => object>();
         if (JSHelperUtil.isNullOrUndefined(beanGenericsMap)) {
-            _beanGenericsMap = new Map<string, new () => object>();
+            map = new Map<string, new () => object>();
         } else {
             for (const [key, value] of beanGenericsMap) {
-                _beanGenericsMap.set(key, value);
+                map.set(key, value);
             }
         }
-        return JsonProtocol._jsonToBean(json, Bean, _beanGenericsMap, parentKey);
+        return JsonProtocol._jsonToBean(json, Bean, map, parentKey);
     }
     public static _jsonToBean<T>(json: object, Bean: new () => T, beanGenericsMap: Map<string, new () => object>, parentKey: string): T {
         if (JSHelperUtil.isNullOrUndefined(Bean)) {
@@ -252,14 +258,14 @@ export class JsonProtocol {
         if (JSHelperUtil.isNullOrUndefined(json)) {
             return new Bean();
         }
-        if (JSHelperUtil.isNullOrUndefined(parentKey)) {
+        /*if (JSHelperUtil.isNullOrUndefined(parentKey)) {
             parentKey = Bean.name;
-        }
+        }*/
         const result  = new Bean();
         // 遍历bean所有的属性
         const keysMap = Reflect.getOwnMetadata(MetaConstant.KEYS, Bean.prototype) || new Set<string>();
         for (const key of keysMap) {
-            let jsonOption = Reflect.getMetadata(MetaConstant.JSON_PROPERTY, Bean.prototype, key);
+            const jsonOption = Reflect.getMetadata(MetaConstant.JSON_PROPERTY, Bean.prototype, key);
             const returnGenerics = Reflect.getOwnMetadata(MetaConstant.BEAN_RETURN_GENERICS, Bean.prototype, key) || new Map<string, new () => object>();
 
             let jsonKeyName = null;
@@ -270,7 +276,12 @@ export class JsonProtocol {
             }
             let typeName = Reflect.getMetadata(MetaConstant.DESIGN_TYPE, Bean.prototype, key);
             // const GenericsIndex = Reflect.getMetadata(MetaConstant.BEAN_GENERICS, Bean.prototype, key);
-            const genericsKey = parentKey + "." + key;
+            let genericsKey = "";
+            if (JSHelperUtil.isNullOrUndefined(parentKey)) {
+                genericsKey = key;
+            } else {
+                genericsKey = parentKey + "." + key;
+            }
             if (JSHelperUtil.isNullOrUndefined(jsonKeyName)) {
                 jsonKeyName = key;
             }
@@ -292,14 +303,14 @@ export class JsonProtocol {
             if (json[jsonKeyName] === undefined || json[jsonKeyName] === null) {
                 result[key] = null;
             } else if (JSHelperUtil.isBaseType(typeName)) {
-                if (typeof json[jsonKeyName] === 'object') {
+                if (typeof json[jsonKeyName] === "object") {
                     if (JSHelperUtil.isStringType(typeName)) {
                         result[key] = JSON.stringify(json[jsonKeyName]);
                     } else {
                         result[key] = null;
                     }
                 } else {
-                    if (JSHelperUtil.isStringType(typeName)){
+                    if (JSHelperUtil.isStringType(typeName)) {
                         result[key] = String(json[jsonKeyName]);
                     } else if (JSHelperUtil.isNumberType(typeName)) {
                         result[key] = Number(json[jsonKeyName]);
@@ -314,10 +325,10 @@ export class JsonProtocol {
                     result[jsonKeyName] = DateUtil.parse(json[jsonKeyName], DateFormatEnum.DATETIMES);
                 }
             } else if (JSHelperUtil.isClassType(typeName)) {
-                result[key] = JsonProtocol._jsonToBean(json[jsonKeyName], typeName,  beanGenericsMap, genericsKey + "." + typeName.name);
+                result[key] = JsonProtocol._jsonToBean(json[jsonKeyName], typeName,  beanGenericsMap, genericsKey);
             } else if (JSHelperUtil.isArrayType(typeName) || JSHelperUtil.isSetType(typeName)) {
                 // array set
-                result[key] = JsonProtocol._arrayToBeans(json[jsonKeyName], typeName, beanGenericsMap, genericsKey + "." + (JSHelperUtil.isArrayType(typeName) ? "Array" : "Set"));
+                result[key] = JsonProtocol._arrayToBeans(json[jsonKeyName], typeName, beanGenericsMap, genericsKey + "." + "Array");
             } else {
                 // type error
             }
@@ -333,7 +344,7 @@ export class JsonProtocol {
      * @return
      */
     public static routerToBean(value: any, genericsProperty: Map<string, new () => object>): any {
-        const genRoot = genericsProperty.get("__root");
+        const genRoot = genericsProperty.get(CommonConstant.GENERICS_ROOT);
         if (JSHelperUtil.isNullOrUndefined(value)) {
             return null;
         } else if (JSHelperUtil.isBaseObject(value) && JSHelperUtil.isBaseType(genRoot)) {
