@@ -11,7 +11,7 @@ export { JsonProperty } from "./annotation/bean/JsonProperty";
 export { Property } from "./annotation/bean/Property";
 export { ReturnGenericsProperty } from "./annotation/bean/ReturnGenericsProperty";
 export { Bean } from "./annotation/initialize/Bean";
-export { ComponentScan } from "./annotation/component/ComponentScan";
+// export { ComponentScan } from "./annotation/component/ComponentScan";
 export { RequestMapping } from "./annotation/mapping/RequestMapping";
 export { RequestBody } from "./annotation/request/RequestBody";
 export { RequestHeader } from "./annotation/request/RequestHeader";
