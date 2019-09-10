@@ -22,6 +22,7 @@ export class AxiosDataSource implements IDataSource {
     protected username: string;
     protected password: string;
     protected name: string;
+    protected cookieKeyList?: string[];
     protected httpConnection: AxiosConnection;
     protected buildOption: AxiosOption;
     constructor() {
@@ -38,6 +39,7 @@ export class AxiosDataSource implements IDataSource {
         if (this.agentConfig) {
             op.agent = new Agent(this.agentConfig);
         }
+        op.cookieKeyList = this.cookieKeyList;
         this.buildOption = op;
     }
 
@@ -103,5 +105,10 @@ export class AxiosDataSource implements IDataSource {
     public setUrl(url: string): void {
         this.url = url;
     }
-
+    public getCookieKeyList() {
+        return this.cookieKeyList;
+    }
+    public setCookieKeyList(cookieKeyList: string[]): void {
+        this.cookieKeyList = cookieKeyList;
+    }
 }
