@@ -15,4 +15,5 @@ export class AxiosOption {
     public password: string;
     public name: string;
     public agent: http.Agent;
+    public cookieKeyList?: string[];
 }

@@ -80,6 +80,18 @@ export class AxiosConnection implements IConnection {
         }
         try {
             const Axios = require("axios");
+            if (JSHelperUtil.isNullOrUndefined(headers)) {
+                headers = {};
+            }
+            if (this.options.cookieKeyList && this.options.cookieKeyList.length > 0) {
+                const Cookies = require("js-cookie");
+                this.options.cookieKeyList.forEach((k) => {
+                    const value = Cookies.get(k);
+                    if (JSHelperUtil.isNotNull(value)) {
+                        headers[k] = value;
+                    }
+                });
+            }
             const requestBody = {
                 url: uri,
                 baseURL: this.options.url,
