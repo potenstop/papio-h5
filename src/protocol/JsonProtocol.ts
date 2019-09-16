@@ -16,7 +16,18 @@ import {IConverter} from "../converter/IConverter";
 import {DateTimeConverter} from "../converter/DateTimeConverter";
 import {DateUtil} from "../util/DateUtil";
 import {DateFormatEnum} from "../enums/DateFormatEnum";
-
+function getKeysMap(keysMap: Map<string, any>, bean: any) {
+    const currentKeysMap = Reflect.getOwnMetadata(MetaConstant.KEYS, bean.prototype) || new Map<string, any>();
+    currentKeysMap.forEach((key) => {
+        keysMap.set(key, bean);
+    });
+    // @ts-ignore
+    const parentClass = bean.__proto__;
+    if (!(parentClass.name === "Function" || parentClass.name === "")) {
+        getKeysMap(keysMap, parentClass);
+    }
+    return;
+}
 export class JsonProtocol {
     /**
      * 方法描述: bean 数组转json对象
@@ -100,10 +111,11 @@ export class JsonProtocol {
             parentKey = bean.constructor.name;
         }*/
         const result = {};
-        const keysMap = Reflect.getOwnMetadata(MetaConstant.KEYS, bean.constructor.prototype) || new Set<string>();
-        for (const key of keysMap) {
+        const keysMap = new Map<string, any>();
+        getKeysMap(keysMap, bean.constructor);
+        for (const [key, con] of keysMap) {
             const jsonOption = Reflect.getMetadata(MetaConstant.JSON_PROPERTY, bean, key);
-            const returnGenerics = Reflect.getOwnMetadata(MetaConstant.BEAN_RETURN_GENERICS, bean.constructor.prototype, key) || new Map<string, new () => object>();
+            const returnGenerics = Reflect.getOwnMetadata(MetaConstant.BEAN_RETURN_GENERICS, con.prototype, key) || new Map<string, new () => object>();
             let jsonKeyName = null;
             let jsonFormat = null;
             if (JSHelperUtil.isNotNull(jsonOption)) {
@@ -263,10 +275,11 @@ export class JsonProtocol {
         }*/
         const result  = new Bean();
         // 遍历bean所有的属性
-        const keysMap = Reflect.getOwnMetadata(MetaConstant.KEYS, Bean.prototype) || new Set<string>();
-        for (const key of keysMap) {
-            const jsonOption = Reflect.getMetadata(MetaConstant.JSON_PROPERTY, Bean.prototype, key);
-            const returnGenerics = Reflect.getOwnMetadata(MetaConstant.BEAN_RETURN_GENERICS, Bean.prototype, key) || new Map<string, new () => object>();
+        const keysMap = new Map<string, any>();
+        getKeysMap(keysMap, Bean);
+        for (const [key, con] of keysMap) {
+            const jsonOption = Reflect.getMetadata(MetaConstant.JSON_PROPERTY, con.prototype, key);
+            const returnGenerics = Reflect.getOwnMetadata(MetaConstant.BEAN_RETURN_GENERICS, con.prototype, key) || new Map<string, new () => object>();
 
             let jsonKeyName = null;
             let jsonFormat = null;

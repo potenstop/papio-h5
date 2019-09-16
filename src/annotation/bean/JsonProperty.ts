@@ -14,9 +14,9 @@ export function JsonProperty(target: object, propertyKey: string): void;
 export function JsonProperty(value: string): CallableFunction;
 export function JsonProperty(value: Option): CallableFunction;
 export function JsonProperty(value: string | Option | object, propertyKey?: string): CallableFunction {
-    if (typeof value === 'string' || value instanceof Option) {
+    if (typeof value === "string" || value instanceof Option) {
         let op = new Option();
-        if (typeof value === 'string') {
+        if (typeof value === "string") {
             op.value = value;
         } else {
             op = value;
