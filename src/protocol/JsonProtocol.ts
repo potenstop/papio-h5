@@ -114,7 +114,7 @@ export class JsonProtocol {
         const keysMap = new Map<string, any>();
         getKeysMap(keysMap, bean.constructor);
         for (const [key, con] of keysMap) {
-            const jsonOption = Reflect.getMetadata(MetaConstant.JSON_PROPERTY, bean, key);
+            const jsonOption = Reflect.getMetadata(MetaConstant.JSON_PROPERTY, con.prototype, key);
             const returnGenerics = Reflect.getOwnMetadata(MetaConstant.BEAN_RETURN_GENERICS, con.prototype, key) || new Map<string, new () => object>();
             let jsonKeyName = null;
             let jsonFormat = null;

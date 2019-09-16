@@ -42,7 +42,7 @@ class PageRequest {
     }
 }
 class UserRequest extends PageRequest {
-    @JsonProperty
+    @JsonProperty("user_id")
     private userId: number;
     public getUserId(): number {
         return this.userId;
@@ -59,7 +59,7 @@ describe("测试 JsonProtocol.test", () => {
         userRequest.setUserId(2);
         const json = JsonProtocol.toJson(userRequest) as any;
         expect(json.pageSize).to.equal(userRequest.getPageSize());
-        expect(json.userId).to.equal(userRequest.getUserId());
+        expect(json.user_id).to.equal(userRequest.getUserId());
         expect(json.page_num).to.equal(userRequest.getPageNum());
 
     });
