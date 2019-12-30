@@ -34,6 +34,7 @@ export { Component } from "./annotation/component/Component";
 export { Resource } from "./annotation/initialize/Resource";
 export { MapperScan } from "./annotation/component/MapperScan";
 export { AxisoRemote } from "./annotation/remote/AxisoRemote";
+export { LocaleMapper } from "./annotation/locale/LocaleMapper";
 
 export { JsonProtocol }  from "./protocol/JsonProtocol";
 
@@ -44,6 +45,7 @@ export { StringUtil } from "./util/StringUtil";
 export { ProcessUtil } from "./util/ProcessUtil";
 export { DateUtil } from "./util/DateUtil";
 export { FileUtil } from "./util/FileUtil";
+export { LocaleUtil } from "./util/LocaleUtil";
 
 export *  from "./enums/RequestMethod";
 export *  from "./enums/RequestFrequency";

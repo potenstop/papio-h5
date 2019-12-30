@@ -29,5 +29,6 @@ export class MetaConstant {
     public static REQUEST_REDIS_MAPPING = Symbol("papio.request.redis.mapping");
     public static REQUEST_MAPPING_HEAD = Symbol("papio.request.mapping.head");
     public static HTTP_DATA = Symbol("papio.data.http");
+    public static LOCALE = Symbol("papio.locale");
 
 }
