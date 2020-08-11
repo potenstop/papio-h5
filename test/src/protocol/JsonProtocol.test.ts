@@ -7,7 +7,18 @@
  * @author yanshaowen
  * @date 2019/9/16 9:59
  */
-import {JsonProperty, JsonProtocol} from "../../../src/PapioH5";
+import {
+    JSHelperUtil,
+    JsonProperty,
+    JsonProtocol,
+    MetaConstant,
+    StringUtil,
+    ValidError,
+    ValidMeta,
+    ValidUtil,
+    NotNull,
+    Min,
+} from "../../../src/PapioH5";
 import {expect} from "chai";
 
 class PageRequest {
@@ -51,6 +62,12 @@ class UserRequest extends PageRequest {
         this.userId = userId;
     }
 }
+
+class VerifyQuery {
+    @NotNull({})
+    @Min({value: 2})
+    public a: number;
+}
 describe("测试 JsonProtocol.test", () => {
     it("toJson()", async () => {
         const userRequest = new UserRequest();
@@ -73,6 +90,12 @@ describe("测试 JsonProtocol.test", () => {
         expect(userRequest1.getPageSize()).to.equal(userRequest.getPageSize());
         expect(userRequest1.getUserId()).to.equal(userRequest.getUserId());
         expect(userRequest1.getPageNum()).to.equal(userRequest.getPageNum());
+    });
+
+    it("verify()", async () => {
+        const verifyQuery = new VerifyQuery();
+        verifyQuery.a = 1;
+        ValidUtil.validBean(verifyQuery);
     });
 
 });

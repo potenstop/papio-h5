@@ -27,7 +27,13 @@ export { PatchMapping } from "./annotation/mapping/PatchMapping";
 export { PutMapping } from "./annotation/mapping/PutMapping";
 export { TraceMapping } from "./annotation/mapping/TraceMapping";
 
+export { Max } from "./annotation/validation/Max";
+export { Min } from "./annotation/validation/Min";
+export { NotBank } from "./annotation/validation/NotBank";
+export { NotNull } from "./annotation/validation/NotNull";
+export { Valid } from "./annotation/validation/Valid";
 export { ValidOptions } from "./annotation/validation/ValidOptions";
+
 export { Service } from "./annotation/component/Service";
 export { Configuration } from "./annotation/component/Configuration";
 export { Component } from "./annotation/component/Component";
@@ -46,6 +52,7 @@ export { ProcessUtil } from "./util/ProcessUtil";
 export { DateUtil } from "./util/DateUtil";
 export { FileUtil } from "./util/FileUtil";
 export { LocaleUtil } from "./util/LocaleUtil";
+export { ValidUtil } from "./util/ValidUtil";
 
 export *  from "./enums/RequestMethod";
 export *  from "./enums/RequestFrequency";
