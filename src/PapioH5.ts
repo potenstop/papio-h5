@@ -53,6 +53,7 @@ export { DateUtil } from "./util/DateUtil";
 export { FileUtil } from "./util/FileUtil";
 export { LocaleUtil } from "./util/LocaleUtil";
 export { ValidUtil } from "./util/ValidUtil";
+export { CollectionUtils } from "./util/CollectionUtils";
 
 export *  from "./enums/RequestMethod";
 export *  from "./enums/RequestFrequency";
