@@ -1,6 +1,6 @@
 {
   "name": "papio-h5",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "papio-h5",
   "main": "lib/PapioH5.js",
   "types": "lib/PapioH5.d.ts",

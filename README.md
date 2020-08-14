@@ -6,3 +6,4 @@
 - 0.0.9  国际化注解
 - 0.0.10 增加验证的注解 
 - 0.0.11 增加CollectionUtils
+- 0.0.12 JsonProtocol数字转换的问题

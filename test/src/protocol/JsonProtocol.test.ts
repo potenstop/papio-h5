@@ -97,5 +97,12 @@ describe("测试 JsonProtocol.test", () => {
         verifyQuery.a = 1;
         ValidUtil.validBean(verifyQuery);
     });
+    it("changeNumber", async () => {
+        const userRequest1 = JsonProtocol.jsonToBean({user_id: "12ddfff"}, UserRequest);
+        expect(userRequest1.getUserId()).to.equal(null);
+
+        const userRequest2 = JsonProtocol.jsonToBean({user_id: "122"}, UserRequest);
+        expect(userRequest2.getUserId()).to.equal(122);
+    });
 
 });

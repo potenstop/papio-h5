@@ -64,16 +64,7 @@ export class JsonProtocol {
         for (const bean of beans) {
             let newBean;
             if (JSHelperUtil.isBaseType(beanGenericsMap.get(parentKey))) {
-                // 基础类型的泛型 则直接赋值
-                if (beanGenericsMap.get(parentKey) === Number) {
-                    newBean = Number(bean);
-                } else if (beanGenericsMap.get(parentKey) === String) {
-                    newBean = String(bean);
-                } else if (beanGenericsMap.get(parentKey) === Boolean) {
-                    newBean = Boolean(bean);
-                } else {
-                    newBean = null;
-                }
+                newBean = JsonProtocol.basicTypeChange(beanGenericsMap.get(parentKey), bean);
             } else {
                 newBean = JsonProtocol._toJson(bean, beanGenericsMap, parentKey + "." + beanGenericsMap.get(parentKey).name);
             }
@@ -226,15 +217,7 @@ export class JsonProtocol {
             let newBean;
             if (JSHelperUtil.isBaseType(beanGenericsMap.get(parentKey))) {
                 // 基础类型的泛型 则直接赋值
-                if (beanGenericsMap.get(parentKey) === Number) {
-                    newBean = Number(bean);
-                } else if (beanGenericsMap.get(parentKey) === String) {
-                    newBean = String(bean);
-                } else if (beanGenericsMap.get(parentKey) === Boolean) {
-                    newBean = Boolean(bean);
-                } else {
-                    newBean = null;
-                }
+                newBean = JsonProtocol.basicTypeChange(beanGenericsMap.get(parentKey), bean);
             } else {
                 newBean = JsonProtocol._jsonToBean(bean, beanGenericsMap.get(parentKey), beanGenericsMap, parentKey + "." + beanGenericsMap.get(parentKey).name);
             }
@@ -326,7 +309,12 @@ export class JsonProtocol {
                     if (JSHelperUtil.isStringType(typeName)) {
                         result[key] = String(json[jsonKeyName]);
                     } else if (JSHelperUtil.isNumberType(typeName)) {
-                        result[key] = Number(json[jsonKeyName]);
+                        const num = Number(json[jsonKeyName]);
+                        if (!isNaN(num)) {
+                            result[key] = num;
+                        } else {
+                            result[key] = null;
+                        }
                     } else if (JSHelperUtil.isBooleanType(typeName)) {
                         result[key] = Boolean(json[jsonKeyName]);
                     }
@@ -361,16 +349,7 @@ export class JsonProtocol {
         if (JSHelperUtil.isNullOrUndefined(value)) {
             return null;
         } else if (JSHelperUtil.isBaseObject(value) && JSHelperUtil.isBaseType(genRoot)) {
-            // 基础类型的泛型 则直接赋值
-            if (genRoot === Number) {
-                return Number(value);
-            } else if (genRoot === String) {
-                return String(value);
-            } else if (genRoot === Boolean) {
-                return Boolean(value);
-            } else {
-                return null;
-            }
+            return JsonProtocol.basicTypeChange(genRoot, value);
         } else if ((typeof value === "object" || typeof value === "string" ) && (JSHelperUtil.isClassType(genRoot) || Array === genRoot)) {
             let jsonParse;
             if (typeof value === "string") {
@@ -445,6 +424,23 @@ export class JsonProtocol {
                     }
                 }
             }
+        }
+    }
+    private static basicTypeChange(defineType: Object, value: any) {
+        // 基础类型的泛型 则直接赋值
+        if (defineType === Number) {
+            const num = Number(value);
+            if (isNaN(num)) {
+                return null;
+            } else {
+                return num;
+            }
+        } else if (defineType === String) {
+            return String(value);
+        } else if (defineType === Boolean) {
+            return Boolean(value);
+        } else {
+            return null;
         }
     }
 }
