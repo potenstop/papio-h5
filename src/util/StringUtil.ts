@@ -54,4 +54,24 @@ export class StringUtil {
     public static isNotBank(str: string): boolean {
         return !StringUtil.isBank(str);
     }
+    /**
+    * 方法描述: 查找字串的所有下标
+    * @author yanshaowen
+    * @date 2019/12/8 7:42
+    * @param str            字符串
+    * @param delimiters     子串
+    * @return
+    */
+    public static findAllSubIndex(str: string, delimiters: string): number[] {
+        const positions: number[] = [];
+        if (StringUtil.isBank(str)) {
+            return positions;
+        }
+        let pos = str.indexOf(delimiters);
+        while (pos > -1) {
+            positions.push(pos);
+            pos = str.indexOf(delimiters, pos + delimiters.length);
+        }
+        return positions;
+    }
 }
