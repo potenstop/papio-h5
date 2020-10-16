@@ -9,7 +9,7 @@
 
 
 ## 项目介绍
-papio-h5主要做的是对接口的统一管理(参考spring boot实现)。借助于typescript的装饰器功能，使用起来更简单。目前只适配于vue项目。目前项目处于初始的开发阶段，不建议公司的生产项目使用。
+papio-h5主要做的是对接口的统一管理。借助于typescript的装饰器功能，使用起来更简单。目前只适配于vue项目。目前项目处于初始的开发阶段，不建议公司的生产项目使用。
 ## 1 地址
 - 项目地址: https://github.com/potenstop/papio-h5  。
 - 实战的项目地址: https://github.com/potenstop/mis-front
